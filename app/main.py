@@ -1,3 +1,5 @@
+import os
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados, Compradores
@@ -13,6 +15,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # pega a porta do Render
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
+
 @app.get("/")
 def root():
     return {"status": "servidor rodando"}
@@ -27,4 +33,5 @@ def post_lidermedtech(interessados: Interessados):
 
 @app.post("/lidermed")
 def post_lidermed(compradores: Compradores):
+
     return handler_lidermed(compradores)
