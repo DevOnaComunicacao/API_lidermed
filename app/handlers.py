@@ -6,21 +6,21 @@ def handler_lidermedtech(interessados):
 
     if interessados.nome == "":
         return {"erro": "insira um nome"}
-    if interessados.empresa == "":
-        return {"erro": "insira uma empresa"}
-    if interessados.cnpj == "":
+   # if interessados.empresa == "":
+   #     return {"erro": "insira uma empresa"}
+  #  if interessados.cnpj == "":
         return {"erro": "insira um cnpj válido"}
-    if interessados.cargo == "":
+  #  if interessados.cargo == "":
         return {"erro": "insira um cargo"}
     if interessados.email == "":
         return {"erro": "insira um email válido"}
     if interessados.whatsapp == "":
         return {"erro": "insira um whatsapp válido"}
-    if interessados.demonstracao != "sim" and interessados.demonstracao != "não":
+  #  if interessados.demonstracao != "sim" and interessados.demonstracao != "não":
         return {"erro: campo inválido"}
-    if interessados.utm_source == "":
+  #  if interessados.utm_source == "":
         return {"erro": "utm inválida"}
-    if interessados.data_hora == "":
+  #  if interessados.data_hora == "":
         return {"erro": "data inválida"}
 
     return enviar_lidermedtech(interessados)
