@@ -1,36 +1,40 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados, Compradores, Admin
-from app.auth import validar_login, validar_tokens
+from app.auth import validar_login, validar_tokens, gerar_callback
 from app.handlers import handler_lidermedtech, handler_lidermed
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=['*'],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
-@app.get("/")
+@app.get('/')
 def root():
-    return {"status": "servidor rodando"}
+    return {'status': 'servidor rodando'}
 
-@app.get("/health")
+@app.get('/health')
 def health():
-    return {"status": "ok"}
+    return {'status': 'ok'}
 
-@app.post("/login")
+@app.get('/kommo/callback')
+def get_kommo_callback(request: Request):
+    return gerar_callback(request)
+
+@app.post('/login')
 def post_login(admin: Admin):
     return validar_login(admin)
 
-@app.post("/lidermedtech")
+@app.post('/lidermedtech')
 def post_lidermedtech(interessados: Interessados, auth: dict = Depends(validar_tokens)):
     return handler_lidermedtech(interessados)
 
-@app.post("/lidermed")
+@app.post('/lidermed')
 def post_lidermed(compradores: Compradores):
 
     return handler_lidermed(compradores)
