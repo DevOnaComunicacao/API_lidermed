@@ -6,7 +6,7 @@ import requests
 from fastapi import Header, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-#dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+dotenv.load_dotenv()
 
 admin = os.getenv('ADMIN')
 password = os.getenv('PASS')
