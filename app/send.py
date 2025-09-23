@@ -4,7 +4,7 @@ import dotenv
 import os
 from app.auth import criar_token_kommo
 
-#dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+dotenv.load_dotenv()
 
 url = os.getenv('KOMMO_URL')
 token = criar_token_kommo()
@@ -48,6 +48,7 @@ def enviar_lidermed(compradores):
     print(compradores)
 
     return JSONResponse(content={'status': 'enviado com sucesso!'})
+
 
 
 
