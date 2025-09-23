@@ -48,7 +48,7 @@ def validar_tokens(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail='Token inválido')
 
 
-#def criar_token_kommo():
+def criar_token_kommo():
     url = os.getenv('KOMMO_URL_AUTH')
     data = {
         'client_id': os.getenv('KOMMO_CLIENT_ID'),
