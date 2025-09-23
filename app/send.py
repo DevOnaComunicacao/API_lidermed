@@ -2,12 +2,12 @@ from fastapi.responses import JSONResponse
 import requests
 import dotenv
 import os
-#from app.auth import criar_token_kommo
+from app.auth import criar_token_kommo
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 url = os.getenv('KOMMO_URL')
-token = os.getenv('REFRESH_TOKEN')#criar_token_kommo()
+token = criar_token_kommo()
 
 headers = {
     'Authorization': f'Bearer {token}',
@@ -48,6 +48,7 @@ def enviar_lidermed(compradores):
     print(compradores)
 
     return JSONResponse(content={'status': 'enviado com sucesso!'})
+
 
 
 
