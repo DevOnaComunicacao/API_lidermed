@@ -7,7 +7,8 @@ from app.auth import criar_token_kommo
 dotenv.load_dotenv()
 
 url = os.getenv('KOMMO_URL')
-token = criar_token_kommo()
+token = "a"
+#criar_token_kommo()
 
 headers = {
     'Authorization': f'Bearer {token}',
@@ -48,6 +49,7 @@ def enviar_lidermed(compradores):
     print(compradores)
 
     return JSONResponse(content={'status': 'enviado com sucesso!'})
+
 
 
 
