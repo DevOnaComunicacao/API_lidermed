@@ -81,7 +81,7 @@ def criar_token_kommo():
 
 
 def gerar_callback(request):
-    code = request.query_params.get("code")
+    code = os.getenv("KOMMO_CODE")
     if not code:
         return {"erro": "Nenhum código recebido"}
 
