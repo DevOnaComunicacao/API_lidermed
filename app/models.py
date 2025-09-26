@@ -6,8 +6,14 @@ class Admin(BaseModel):
 
 class Interessados(BaseModel):
     nome: str
+    empresa: str
+    cnpj: str
+    cargo: str
     email: str
     whatsapp: str
+    interesse: str
+    utm_source: str
+    data_hora: str
 
 class Compradores(BaseModel):
     nome: str
