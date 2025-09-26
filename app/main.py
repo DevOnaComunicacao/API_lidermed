@@ -1,3 +1,5 @@
+import threading
+import requests
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados, Compradores, Admin
@@ -13,6 +15,18 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+
+def ping_servidor():
+    try:
+        requests.get("https://api.lidermedtech.com.br")
+    except Exception as e:
+        print("Erro no ping:", e)
+    threading.Timer(13 * 60, ping_servidor).start()
+
+@app.on_event("startup")
+def iniciar_ping():
+    ping_servidor()
 
 @app.get('/')
 def root():
@@ -35,7 +49,7 @@ def post_lidermedtech(interessados: Interessados, auth: dict = Depends(validar_t
     return handler_lidermedtech(interessados)
 
 @app.post('/lidermed')
-def post_lidermed(compradores: Compradores):
+def post_lidermed(compradores: Compradores, auth: dict = Depends(validar_tokens)):
 
     return handler_lidermed(compradores)
 
