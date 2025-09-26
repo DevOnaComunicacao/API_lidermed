@@ -6,7 +6,12 @@ import requests
 from fastapi import Header, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-dotenv.load_dotenv()
+if os.getenv("RENDER") != "true":
+    dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+    dotenv.load_dotenv(dotenv_path)
+    print("Carregando .env localmente")
+else:
+    print("Rodando no Render, .env ignorado")
 
 admin = os.getenv('ADMIN')
 password = os.getenv('PASS')

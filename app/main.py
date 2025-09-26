@@ -1,12 +1,22 @@
 import threading
 import requests
+import os
+import jwt
+import dotenv
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados, Compradores, Admin
-from app.auth import validar_login, validar_tokens, gerar_callback
+from app.auth import validar_login, gerar_callback
 from app.handlers import handler_lidermedtech, handler_lidermed
 
 app = FastAPI()
+
+if os.getenv("RENDER") != "true":
+    dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+    dotenv.load_dotenv(dotenv_path)
+    print("Carregando .env localmente")
+else:
+    print("Rodando no Render, .env ignorado")
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,11 +55,46 @@ def post_login(admin: Admin):
     return validar_login(admin)
 
 @app.post('/lidermedtech')
-def post_lidermedtech(interessados: Interessados, auth: dict = Depends(validar_tokens)):
+def post_lidermedtech(interessados: Interessados, request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return {"erro": "Token não enviado"}
+
+    try:
+
+        secret = os.getenv('JWT_KEY')
+
+        payload = jwt.decode(
+            auth_header.split(" ")[1],
+            secret,
+            algorithms=["HS256"]
+        )
+    except jwt.ExpiredSignatureError:
+        return {"erro": "Token expirado"}
+    except jwt.InvalidTokenError:
+        return {"erro": "Token inválido"}
+
     return handler_lidermedtech(interessados)
 
+
 @app.post('/lidermed')
-def post_lidermed(compradores: Compradores, auth: dict = Depends(validar_tokens)):
+def post_lidermed(compradores: Compradores, request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return {"erro": "Token não enviado"}
+
+    try:
+
+        secret = os.getenv('JWT_KEY')
+
+        payload = jwt.decode(
+            auth_header.split(" ")[1],
+            secret,
+            algorithms=["HS256"]
+        )
+    except jwt.ExpiredSignatureError:
+        return {"erro": "Token expirado"}
+    except jwt.InvalidTokenError:
+        return {"erro": "Token inválido"}
 
     return handler_lidermed(compradores)
-
