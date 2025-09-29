@@ -12,9 +12,7 @@ else:
     print("Rodando no Render, .env ignorado")
 
 url = os.getenv('KOMMO_URL')
-token = "a"
-
-    #criar_token_kommo()
+token = criar_token_kommo()
 
 
 
@@ -57,6 +55,7 @@ def enviar_lidermed(compradores):
     print(compradores)
 
     return JSONResponse(content={'status': 'enviado com sucesso!'})
+
 
 
 
