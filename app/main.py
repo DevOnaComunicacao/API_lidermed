@@ -39,10 +39,10 @@ def iniciar_ping():
     ping_servidor()
 
 origins = [
-    "https://www.lidermed.com.br/",
-    "https://lidermed.com.br/"
-    "https://lidermedtech.com.br/",
-    "https://www.lidermedtech.com.br/"
+    "https://www.lidermed.com.br",
+    "https://lidermed.com.br"
+    "https://lidermedtech.com.br",
+    "https://www.lidermedtech.com.br"
 ]
 
 @app.get('/')
@@ -108,3 +108,4 @@ def post_lidermed(compradores: Compradores, request: Request):
         return {"erro": "Token inválido"}
 
     return handler_lidermed(compradores)
+
