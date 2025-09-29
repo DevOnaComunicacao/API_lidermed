@@ -12,6 +12,7 @@ class Interessados(BaseModel):
     email: str
     whatsapp: str
     interesse: str
+    origem: str
     utm_source: str
     data_hora: str
 
@@ -23,5 +24,6 @@ class Compradores(BaseModel):
     email: str
     whatsapp: str
     compra: str
+    origin: str
     utm_source: str
     data_hora: str

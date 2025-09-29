@@ -38,6 +38,13 @@ def ping_servidor():
 def iniciar_ping():
     ping_servidor()
 
+origins = [
+    "https://www.lidermed.com.br/",
+    "https://lidermed.com.br/"
+    "https://lidermedtech.com.br/",
+    "https://www.lidermedtech.com.br/"
+]
+
 @app.get('/')
 def root():
     return {'status': 'servidor rodando'}
@@ -56,14 +63,17 @@ def post_login(admin: Admin):
 
 @app.post('/lidermedtech')
 def post_lidermedtech(interessados: Interessados, request: Request):
+    origin = request.headers.get("origin")
+
+    if origin in origins:
+        return handler_lidermedtech(interessados)
+
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         return {"erro": "Token não enviado"}
 
     try:
-
         secret = os.getenv('JWT_KEY')
-
         payload = jwt.decode(
             auth_header.split(" ")[1],
             secret,
