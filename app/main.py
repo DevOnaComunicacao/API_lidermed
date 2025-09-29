@@ -63,27 +63,6 @@ def post_login(admin: Admin):
 
 @app.post('/lidermedtech')
 def post_lidermedtech(interessados: Interessados, request: Request):
-    origin = request.headers.get("origin")
-
-    if origin in origins:
-        return handler_lidermedtech(interessados)
-
-    auth_header = request.headers.get("Authorization")
-    if not auth_header:
-        return {"erro": "Token não enviado"}
-
-    try:
-        secret = os.getenv('JWT_KEY')
-        payload = jwt.decode(
-            auth_header.split(" ")[1],
-            secret,
-            algorithms=["HS256"]
-        )
-    except jwt.ExpiredSignatureError:
-        return {"erro": "Token expirado"}
-    except jwt.InvalidTokenError:
-        return {"erro": "Token inválido"}
-
     return handler_lidermedtech(interessados)
 
 
@@ -108,4 +87,5 @@ def post_lidermed(compradores: Compradores, request: Request):
         return {"erro": "Token inválido"}
 
     return handler_lidermed(compradores)
+
 
