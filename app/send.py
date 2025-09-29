@@ -23,31 +23,9 @@ headers = {
 
 def enviar_lidermedtech(interessados):
     try:
-        # Lead
+        # Lead precisa ser array
         lead_payload = [{
-            'name': interessados.nome,
-            'custom_fields_values': [
-                {
-                    "field_id": 1066712,  # ID do campo Empresa
-                    "values": [{"value": interessados.empresa}]
-                },
-                {
-                    "field_id": 1070092,  # ID do campo CNPJ
-                    "values": [{"value": interessados.cnpj}]
-                },
-                {
-                    "field_id": 1066722,  # ID Quantidade CLT
-                    "values": [{"value": "nenhum"}]
-                },
-                {
-                    "field_id": 1066720,  # ID Endereço
-                    "values": [{"value": "nenhum"}]
-                },
-                {
-                    "field_id": 1062677,  # ID Serviços
-                    "values": [{"value": "nenhum"}]
-                }
-            ]
+            'name': interessados.nome
         }]
         lead_res = requests.post(f'{url}/api/v4/leads', json=lead_payload, headers=headers)
 
@@ -61,12 +39,12 @@ def enviar_lidermedtech(interessados):
 
         lead_id = lead_res.json()['_embedded']['leads'][0]['id']
 
-        # Contato
+        # Contato também precisa ser array
         contact_payload = [{
             'name': interessados.nome,
             'custom_fields_values': [
                 {'field_code': 'EMAIL', 'values': [{'value': interessados.email}]},
-                {'field_code': 'PHONE', 'values': [{'value': interessados.whatsapp}]}
+                {'field_code': 'PHONE', 'values': [{'value': interessados.whatsapp}]},
             ]
         }]
         contact_res = requests.post(f'{url}/api/v4/contacts', json=contact_payload, headers=headers)
@@ -81,6 +59,7 @@ def enviar_lidermedtech(interessados):
 
         contact_id = contact_res.json()['_embedded']['contacts'][0]['id']
 
+        # Vincular contato ao lead
         link_payload = [{'to_entity_id': contact_id, 'to_entity_type': 'contacts'}]
         link_res = requests.post(f'{url}/api/v4/leads/{lead_id}/link', json=link_payload, headers=headers)
 
@@ -96,6 +75,7 @@ def enviar_lidermedtech(interessados):
 
     except Exception as e:
         return JSONResponse(content={'erro': f'{e}'})
+
 
 
 
