@@ -16,7 +16,7 @@ def handler_lidermedtech(interessados):
         return JSONResponse(content={"erro": "insira um email válido"})
     if interessados.whatsapp == "":
         return JSONResponse(content={"erro": "insira um whatsapp válido"})
-    if interessados.demonstracao != "sim" and interessados.demonstracao != "não":
+    if interessados.interesse != "sim" and interessados.interesse != "não":
         return {"erro: campo inválido"}
     if interessados.utm_source == "":
         return {"erro": "utm inválida"}
@@ -47,3 +47,4 @@ def handler_lidermed(compradores):
         return JSONResponse(content={"erro": "data inválida"})
 
     return enviar_lidermed(compradores)
+
