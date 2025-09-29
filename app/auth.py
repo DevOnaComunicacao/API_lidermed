@@ -108,8 +108,8 @@ def gerar_callback(request):
         dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")
 
         # Atualiza ou cria as variáveis no .env
-        set_key(dotenv_path, "KOMMO_ACCESS_TOKEN", data["access_token"])
-        set_key(dotenv_path, "KOMMO_REFRESH_TOKEN", data["refresh_token"])
+        dotenv.set_key(dotenv_path, "KOMMO_ACCESS_TOKEN", data["access_token"])
+        dotenv.set_key(dotenv_path, "KOMMO_REFRESH_TOKEN", data["refresh_token"])
 
         return {"status": "ok", "tokens": data}
     else:
