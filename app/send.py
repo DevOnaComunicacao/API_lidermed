@@ -23,22 +23,61 @@ headers = {
 
 def enviar_lidermedtech(interessados):
     try:
-        lead_payload = {'name': interessados.nome}
+        # Lead
+        lead_payload = [{
+            'name': interessados.nome,
+            'custom_fields_values': [
+                {
+                    "field_id": 1066712,  # ID do campo Empresa
+                    "values": [{"value": interessados.empresa}]
+                },
+                {
+                    "field_id": 1070092,  # ID do campo CNPJ
+                    "values": [{"value": interessados.cnpj}]
+                },
+                {
+                    "field_id": 1066722,  # ID Quantidade CLT
+                    "values": [{"value": "nenhum"}]
+                },
+                {
+                    "field_id": 1066720,  # ID Endereço
+                    "values": [{"value": "nenhum"}]
+                },
+                {
+                    "field_id": 1062677,  # ID Serviços
+                    "values": [{"value": "nenhum"}]
+                }
+            ]
+        }]
         lead_res = requests.post(f'{url}/api/v4/leads', json=lead_payload, headers=headers)
 
         if lead_res.status_code not in (200, 201):
-            return {'ok': False, 'step': 'lead', 'status': lead_res.status_code, 'error': lead_res.text}
+            return {
+                'ok': False,
+                'step': 'lead',
+                'status': lead_res.status_code,
+                'error': lead_res.text
+            }
 
         lead_id = lead_res.json()['_embedded']['leads'][0]['id']
 
+        # Contato
         contact_payload = [{
-        'name': interessados.nome,
-        'custom_fields_values': [
-            {'field_code': 'EMAIL', 'values': [{'value': interessados.email}]},
-            {'field_code': 'PHONE', 'values': [{'value': interessados.whatsapp}]},
+            'name': interessados.nome,
+            'custom_fields_values': [
+                {'field_code': 'EMAIL', 'values': [{'value': interessados.email}]},
+                {'field_code': 'PHONE', 'values': [{'value': interessados.whatsapp}]}
             ]
         }]
         contact_res = requests.post(f'{url}/api/v4/contacts', json=contact_payload, headers=headers)
+
+        if contact_res.status_code not in (200, 201):
+            return {
+                'ok': False,
+                'step': 'contact',
+                'status': contact_res.status_code,
+                'error': contact_res.text
+            }
 
         contact_id = contact_res.json()['_embedded']['contacts'][0]['id']
 
@@ -47,8 +86,17 @@ def enviar_lidermedtech(interessados):
 
         if link_res.status_code in (200, 201):
             return JSONResponse(content={'status': 'dados enviados com sucesso!'})
+
+        return {
+            'ok': False,
+            'step': 'link',
+            'status': link_res.status_code,
+            'error': link_res.text
+        }
+
     except Exception as e:
         return JSONResponse(content={'erro': f'{e}'})
+
 
 
 def enviar_lidermed(compradores):
