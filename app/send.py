@@ -12,16 +12,16 @@ else:
     print("Rodando no Render, .env ignorado")
 
 url = os.getenv('KOMMO_URL')
-token = criar_token_kommo()
-
-
-
-headers = {
-    'Authorization': f'Bearer {token}',
-    'Content-Type': 'application/json'
-}
 
 def enviar_lidermedtech(interessados):
+
+    token = criar_token_kommo()
+
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    }
+
     try:
         # Lead
         lead_payload = [{
@@ -34,6 +34,14 @@ def enviar_lidermedtech(interessados):
                 {
                     "field_id": 1070092,  # ID do campo CNPJ
                     "values": [{"value": interessados.cnpj}]
+                },
+                {
+                    "field_id": 1104100,  # ID do campo Origem
+                    "values": [{"value": interessados.origem}]
+                },
+                {
+                    "field_id": 1104102,  # ID do campo Utm
+                    "values": [{"value": interessados.utm_source}]
                 }
             ]
         }]
@@ -49,7 +57,6 @@ def enviar_lidermedtech(interessados):
 
         lead_id = lead_res.json()['_embedded']['leads'][0]['id']
 
-        # Contato
         contact_payload = [{
             'name': interessados.nome,
             'custom_fields_values': [
@@ -86,10 +93,6 @@ def enviar_lidermedtech(interessados):
     except Exception as e:
         return JSONResponse(content={'erro': f'{e}'})
 
-def enviar_lidermed(compradores):
-    print(compradores)
-
-    return JSONResponse(content={'status': 'enviado com sucesso!'})
 
 
 
