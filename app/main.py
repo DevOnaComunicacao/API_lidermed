@@ -7,7 +7,7 @@ from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados
 from app.auth import gerar_callback
-from app.handlers import handler_lidermedtech, handler_lidermed
+from app.handlers import handler_lidermedtech
 
 app = FastAPI()
 
