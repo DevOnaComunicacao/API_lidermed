@@ -5,8 +5,8 @@ import jwt
 import dotenv
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import Interessados, Compradores, Admin
-from app.auth import validar_login, gerar_callback
+from app.models import Interessados
+from app.auth import gerar_callback
 from app.handlers import handler_lidermedtech, handler_lidermed
 
 app = FastAPI()
