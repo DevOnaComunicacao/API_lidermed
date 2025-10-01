@@ -64,6 +64,7 @@ async def post_lidermed(request: Request):
         assunto=form.get("assunto", ""),
         mensagem=form.get("mensagem", "")
     )
+    print(compradores.dict())
     return handler_lidermed(compradores)
 
 
