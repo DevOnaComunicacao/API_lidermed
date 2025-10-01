@@ -54,13 +54,22 @@ def get_kommo_callback(request: Request):
 def post_lidermedtech(interessados: Interessados):
     return handler_lidermedtech(interessados)
 
-@app.post('/lidermed')
+@app.post("/lidermed")
 async def post_lidermed(request: Request):
-    data = await request.json()
+    content_type = request.headers.get("content-type", "")
+
+    if "application/json" in content_type:
+        data = await request.json()
+    else:
+        form_data = await request.form()
+        data = dict(form_data)
+
     print("Payload recebido:", data)
-    return data
-    #return handler_lidermed(compradores)
 
+    try:
+        compradores = Compradores(**data)
+    except Exception as e:
+        return {"erro": f"Payload inválido: {str(e)}", "payload": data}
 
-
+    return handler_lidermed(compradores)
 
