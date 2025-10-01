@@ -93,7 +93,7 @@ def enviar_lidermedtech(interessados):
     except Exception as e:
         return JSONResponse(content={'erro': f'{e}'})
 
-def enviar_lidermed(compradores):
+def enviar_lidermed(compradores: dict):
     token = criar_token_kommo()
     origem = "Lídermed"
 
@@ -105,7 +105,7 @@ def enviar_lidermed(compradores):
     try:
         # Lead
         lead_payload = [{
-            'name': compradores.nome,
+            'name': compradores["nome"],
             'custom_fields_values': [
                 {
                     "field_id": 1104100,  # ID do campo Origem
@@ -126,10 +126,10 @@ def enviar_lidermed(compradores):
         lead_id = lead_res.json()['_embedded']['leads'][0]['id']
 
         contact_payload = [{
-            'name': compradores.nome,
+            'name': compradores["nome"],
             'custom_fields_values': [
-                {'field_code': 'EMAIL', 'values': [{'value': compradores.email}]},
-                {'field_code': 'PHONE', 'values': [{'value': compradores.whatsapp}]}
+                {'field_code': 'EMAIL', 'values': [{'value': compradores["email"]}]},
+                {'field_code': 'PHONE', 'values': [{'value': compradores["whatsapp"]}]}
             ]
         }]
         contact_res = requests.post(f'{url}/api/v4/contacts', json=contact_payload, headers=headers)
@@ -160,11 +160,4 @@ def enviar_lidermed(compradores):
 
     except Exception as e:
         return JSONResponse(content={'erro': f'{e}'})
-
-
-
-
-
-
-
 
