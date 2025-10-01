@@ -5,9 +5,9 @@ import jwt
 import dotenv
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import Interessados
+from app.models import Interessados, Compradores
 from app.auth import gerar_callback
-from app.handlers import handler_lidermedtech
+from app.handlers import handler_lidermedtech, handler_lidermed
 
 app = FastAPI()
 
@@ -51,8 +51,12 @@ def get_kommo_callback(request: Request):
     return gerar_callback(request)
 
 @app.post('/lidermedtech')
-def post_lidermedtech(interessados: Interessados, request: Request):
+def post_lidermedtech(interessados: Interessados):
     return handler_lidermedtech(interessados)
+
+@app.post('/lidermed')
+def post_lidermed(compradores: Compradores):
+    return handler_lidermed(compradores)
 
 
 

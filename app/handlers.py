@@ -1,5 +1,5 @@
 from fastapi.responses import JSONResponse
-from app.send import enviar_lidermedtech
+from app.send import enviar_lidermedtech, enviar_lidermed
 
 def handler_lidermedtech(interessados):
 
@@ -32,5 +32,14 @@ def handler_lidermedtech(interessados):
 
     return enviar_lidermedtech(interessados)
 
+def handler_lidermed(compradores):
+    if compradores.nome == "":
+        return JSONResponse(content={"erro": "insira um nome"})
+    if compradores.whatsapp == "":
+        return JSONResponse(content={"erro": "insira um whatsapp válido"})
+    if compradores.email == "":
+        return JSONResponse(content={"erro": "insira um email válido"})
 
+    compradores.nome = compradores.nome.title()
 
+    return enviar_lidermed(compradores)

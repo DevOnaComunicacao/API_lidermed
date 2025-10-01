@@ -15,3 +15,10 @@ class Interessados(BaseModel):
     origem: str
     utm_source: str
     data_hora: str
+
+class Compradores(BaseModel):
+    nome: str
+    whatsapp: str
+    email: str
+    assunto: str
+    mensagem: str
