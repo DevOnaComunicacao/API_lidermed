@@ -58,7 +58,8 @@ def post_lidermedtech(interessados: Interessados):
 async def post_lidermed(compradores: Compradores, request: Request):
     data = await request.json()
     print("Payload recebido:", data)
-    return handler_lidermed(compradores)
+    return data
+    #return handler_lidermed(compradores)
 
 
 
