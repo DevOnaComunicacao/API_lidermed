@@ -3,7 +3,7 @@ import requests
 import os
 import jwt
 import dotenv
-from fastapi import FastAPI, Depends, Request
+from fastapi import FastAPI, Depends, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
 from app.models import Interessados, Compradores
 from app.auth import gerar_callback
@@ -54,22 +54,11 @@ def get_kommo_callback(request: Request):
 def post_lidermedtech(interessados: Interessados):
     return handler_lidermedtech(interessados)
 
-@app.post("/lidermed")
-async def post_lidermed(request: Request):
-    content_type = request.headers.get("content-type", "")
-
-    if "application/json" in content_type:
-        data = await request.json()
-    else:
-        form_data = await request.form()
-        data = dict(form_data)
-
-    print("Payload recebido:", data)
-
-    try:
-        compradores = Compradores(**data)
-    except Exception as e:
-        return {"erro": f"Payload inválido: {str(e)}", "payload": data}
-
+@app.post('/lidermed')
+def post_lidermed(nome: str = Form(...), whatsapp: str = Form(...), email: str = Form(...), assunto: str = Form(...), mensagem: str = Form(...)):
+    compradores = Compradores(nome=nome, whatsapp=whatsapp, email=email, assunto=assunto, mensagem=mensagem)
     return handler_lidermed(compradores)
+
+
+
 

@@ -33,14 +33,13 @@ def handler_lidermedtech(interessados):
     return enviar_lidermedtech(interessados)
 
 def handler_lidermed(compradores):
-    if not compradores.nome:
+    if compradores.nome == "":
         return JSONResponse(content={"erro": "insira um nome"})
-    if not compradores.whatsapp:
+    if compradores.whatsapp == "":
         return JSONResponse(content={"erro": "insira um whatsapp válido"})
-    if not compradores.email:
+    if compradores.email == "":
         return JSONResponse(content={"erro": "insira um email válido"})
 
-    compradores_dict = compradores.dict()
-    compradores_dict["nome"] = compradores_dict["nome"].title()
+    compradores.nome = compradores.nome.title()
 
-    return enviar_lidermed(compradores_dict)
+    return enviar_lidermed(compradores)
