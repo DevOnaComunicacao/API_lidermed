@@ -58,11 +58,11 @@ def post_lidermedtech(interessados: Interessados):
 async def post_lidermed(request: Request):
     form = await request.form()
     compradores = Compradores(
-        nome=form.get("form_fields[nome]"),
-        whatsapp=form.get("form_fields[whatsapp]"),
-        email=form.get("form_fields[email]"),
-        assunto=form.get("form_fields[assunto]"),
-        mensagem=form.get("form_fields[mensagem]")
+        nome=form.get("form_fields[nome]", ""),
+        whatsapp=form.get("form_fields[whatsapp]", ""),
+        email=form.get("form_fields[email]", ""),
+        assunto=form.get("form_fields[assunto]", ""),
+        mensagem=form.get("form_fields[mensagem]", "")
     )
     print(compradores.dict())
     return handler_lidermed(compradores)
