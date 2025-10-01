@@ -55,7 +55,7 @@ def post_lidermedtech(interessados: Interessados):
     return handler_lidermedtech(interessados)
 
 @app.post('/lidermed')
-async def post_lidermed(compradores: Compradores, request: Request):
+async def post_lidermed(request: Request):
     data = await request.json()
     print("Payload recebido:", data)
     return data
