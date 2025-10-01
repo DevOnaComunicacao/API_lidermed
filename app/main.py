@@ -56,7 +56,12 @@ def post_lidermedtech(interessados: Interessados):
 
 @app.post('/lidermed')
 async def post_lidermed(request: Request):
+    print("Headers:", request.headers)  # 👈 mostra Content-Type
+    body = await request.body()
+    print("Raw body:", body.decode())  #
+
     form = await request.form()
+    print("Parsed form:", dict(form))
     compradores = Compradores(
         nome=form.get("form_fields[nome]", ""),
         whatsapp=form.get("form_fields[whatsapp]", ""),
