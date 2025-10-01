@@ -55,8 +55,15 @@ def post_lidermedtech(interessados: Interessados):
     return handler_lidermedtech(interessados)
 
 @app.post('/lidermed')
-def post_lidermed(nome: str = Form(...), whatsapp: str = Form(...), email: str = Form(...), assunto: str = Form(...), mensagem: str = Form(...)):
-    compradores = Compradores(nome=nome, whatsapp=whatsapp, email=email, assunto=assunto, mensagem=mensagem)
+async def post_lidermed(request: Request):
+    form = await request.form()
+    compradores = Compradores(
+        nome=form.get("nome", ""),
+        whatsapp=form.get("whatsapp", ""),
+        email=form.get("email", ""),
+        assunto=form.get("assunto", ""),
+        mensagem=form.get("mensagem", "")
+    )
     return handler_lidermed(compradores)
 
 
