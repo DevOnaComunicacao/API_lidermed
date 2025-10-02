@@ -27,16 +27,16 @@ app.add_middleware(
 )
 
 
-def ping_servidor():
-    try:
-        requests.get("https://api.lidermedtech.com.br")
-    except Exception as e:
-        print("Erro no ping:", e)
-    threading.Timer(13 * 60, ping_servidor).start()
+#def ping_servidor():
+   # try:
+      #  requests.get("https://api.lidermedtech.com.br")
+   # except Exception as e:
+    #    print("Erro no ping:", e)
+  #  threading.Timer(13 * 60, ping_servidor).start()
 
-@app.on_event("startup")
-def iniciar_ping():
-    ping_servidor()
+#@app.on_event("startup")
+#def iniciar_ping():
+#    ping_servidor()
 
 @app.get('/')
 def root():
@@ -71,6 +71,7 @@ async def post_lidermed(request: Request):
     )
     print(compradores.dict())
     return handler_lidermed(compradores)
+
 
 
 
