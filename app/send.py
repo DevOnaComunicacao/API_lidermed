@@ -3,10 +3,11 @@ import requests
 import dotenv
 import os
 from app.auth import criar_token_kommo
+from pathlib import Path
 
 if os.getenv("RENDER") != "true":
-    dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-    dotenv.load_dotenv(dotenv_path)
+    env_path = Path(__file__).parent / ".env"
+    dotenv.load_dotenv(dotenv_path=env_path)
     print("Carregando .env localmente")
 else:
     print("Rodando no Render, .env ignorado")

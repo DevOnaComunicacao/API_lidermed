@@ -5,10 +5,12 @@ import dotenv
 import requests
 from fastapi import Header, HTTPException, Request
 from fastapi.responses import JSONResponse
+from app.bd import get_mysql_connection
+from pathlib import Path
 
 if os.getenv("RENDER") != "true":
-    dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-    dotenv.load_dotenv(dotenv_path)
+    env_path = Path(__file__).parent / ".env"
+    dotenv.load_dotenv(dotenv_path=env_path)
     print("Carregando .env localmente")
 else:
     print("Rodando no Render, .env ignorado")
@@ -52,25 +54,57 @@ def validar_tokens(authorization: str = Header(None)):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail='Token inválido')
 
+
 def criar_token_kommo():
     """
-    Gera um access token do Kommo usando refresh token.
-    Retorna o access token válido.
+    Gera um access token do Kommo usando refresh token salvo na tabela `tokens`.
     """
-    url = os.getenv('KOMMO_URL_AUTH').strip()  # Endpoint de OAuth
+    conn = get_mysql_connection()
+    if conn is None:
+        raise RuntimeError("Falha ao conectar no banco: get_mysql_connection() retornou None. Verifique credenciais/variáveis de ambiente.")
+
+    cursor = None
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT token FROM tokens LIMIT 1;")
+        resultado = cursor.fetchone()
+
+        if not resultado:
+            raise ValueError("Nenhum refresh token encontrado na tabela 'tokens'.")
+
+        refresh_token = resultado[0].strip()
+        print(f"refresh token: {refresh_token}")
+
+    except Exception as e:
+        raise RuntimeError(f"Erro ao buscar refresh token no banco: {e}")
+
+    finally:
+        # fecha cursor só se foi criado
+        if cursor:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+        # fecha conexão se ela existir e estiver aberta
+        try:
+            if conn and conn.is_connected():
+                conn.close()
+        except Exception:
+            pass
+
+    # --- Request para Kommo ---
+    url = os.getenv('KOMMO_URL_AUTH', '').strip()
     data = {
-        'client_id': os.getenv('KOMMO_CLIENT_ID').strip(),
-        'client_secret': os.getenv('KOMMO_CLIENT_SECRET').strip(),
+        'client_id': os.getenv('KOMMO_CLIENT_ID', '').strip(),
+        'client_secret': os.getenv('KOMMO_CLIENT_SECRET', '').strip(),
         'grant_type': 'refresh_token',
-        'refresh_token': os.getenv('REFRESH_TOKEN').strip(),
-        'redirect_uri': os.getenv('KOMMO_REDIRECT_URI').strip()  # essencial para alguns fluxos
+        'refresh_token': refresh_token,
+        'redirect_uri': os.getenv('KOMMO_REDIRECT_URI', '').strip()
     }
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
     try:
         res = requests.post(url, data=data, headers=headers)
-
-        # Debug: mostra detalhes da resposta
         if res.status_code != 200:
             print("Erro ao gerar access token:", res.status_code, res.text)
             res.raise_for_status()
@@ -83,7 +117,6 @@ def criar_token_kommo():
 
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Falha na requisição de token Kommo: {e}")
-
 
 def gerar_callback(request):
     code = request.query_params.get("code")
