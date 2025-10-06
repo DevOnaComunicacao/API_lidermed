@@ -56,12 +56,10 @@ def validar_tokens(authorization: str = Header(None)):
 
 
 def criar_token_kommo():
-    """
-    Gera um access token do Kommo usando refresh token salvo na tabela `tokens`.
-    """
+
     conn = get_mysql_connection()
     if conn is None:
-        raise RuntimeError("Falha ao conectar no banco: get_mysql_connection() retornou None. Verifique credenciais/variáveis de ambiente.")
+        raise RuntimeError("Falha ao conectar no banco.")
 
     cursor = None
     try:
@@ -73,24 +71,13 @@ def criar_token_kommo():
             raise ValueError("Nenhum refresh token encontrado na tabela 'tokens'.")
 
         refresh_token = resultado[0].strip()
-        print(f"refresh token: {refresh_token}")
-
-    except Exception as e:
-        raise RuntimeError(f"Erro ao buscar refresh token no banco: {e}")
+        print(f"Usando refresh token: {refresh_token}")
 
     finally:
-        # fecha cursor só se foi criado
         if cursor:
-            try:
-                cursor.close()
-            except Exception:
-                pass
-        # fecha conexão se ela existir e estiver aberta
-        try:
-            if conn and conn.is_connected():
-                conn.close()
-        except Exception:
-            pass
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
 
     # --- Request para Kommo ---
     url = os.getenv('KOMMO_URL_AUTH', '').strip()
@@ -105,15 +92,26 @@ def criar_token_kommo():
 
     try:
         res = requests.post(url, data=data, headers=headers)
-        if res.status_code != 200:
-            print("Erro ao gerar access token:", res.status_code, res.text)
-            res.raise_for_status()
+        res.raise_for_status()
+        resp_json = res.json()
 
-        token = res.json().get('access_token')
-        if not token:
+        access_token = resp_json.get('access_token')
+        novo_refresh_token = resp_json.get('refresh_token')  # chave nova, importante!
+
+        if not access_token:
             raise ValueError("Nenhum access token retornado pelo Kommo.")
 
-        return token
+        # --- Atualiza refresh token no banco se houver novo ---
+        if novo_refresh_token and novo_refresh_token != refresh_token:
+            conn = get_mysql_connection()
+            cursor = conn.cursor()
+            cursor.execute("UPDATE tokens SET token = %s;", (novo_refresh_token,))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            print("Refresh token atualizado no banco.")
+
+        return access_token
 
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Falha na requisição de token Kommo: {e}")
